@@ -111,6 +111,7 @@ async def download_paper_jar() -> bool:
     state.download_status = "fetching"
     state.download_progress = 0
     state.download_error = ""
+    print("[*] server.jar not found. Fetching latest Paper 1.21.1 build details...")
     await broadcast_console("[Sculk Panel] server.jar not found. Fetching latest Paper 1.21.1 build details...")
     
     try:
@@ -126,9 +127,11 @@ async def download_paper_jar() -> bool:
         latest_build = data["builds"][-1]
         download_url = f"https://api.papermc.io/v2/projects/paper/versions/1.21.1/builds/{latest_build}/downloads/paper-1.21.1-{latest_build}.jar"
     except Exception as e:
+        print(f"[!] Failed to fetch build details: {e}. Using fallback Paper build 120.")
         await broadcast_console(f"[Sculk Panel] Failed to fetch build details: {e}. Using fallback Paper build 120.")
         download_url = "https://api.papermc.io/v2/projects/paper/versions/1.21.1/builds/120/downloads/paper-1.21.1-120.jar"
         
+    print(f"[*] Downloading Paper 1.21.1 jar from: {download_url}")
     await broadcast_console(f"[Sculk Panel] Downloading Paper 1.21.1 jar from: {download_url}")
     
     try:
@@ -155,11 +158,13 @@ async def download_paper_jar() -> bool:
         await loop.run_in_executor(None, download_file)
         state.download_status = "complete"
         state.download_progress = 100
+        print("[*] Paper 1.21.1 downloaded and saved as server.jar successfully.")
         await broadcast_console("[Sculk Panel] Paper 1.21.1 downloaded and saved as server.jar successfully.")
         return True
     except Exception as e:
         state.download_status = "failed"
         state.download_error = str(e)
+        print(f"[!] Failed to download Paper 1.21.1: {e}")
         await broadcast_console(f"[Sculk Panel ERROR] Failed to download Paper 1.21.1: {e}")
         if os.path.exists(server_jar):
             try:
