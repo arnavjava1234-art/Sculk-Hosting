@@ -110,6 +110,49 @@ async function refreshStatus() {
             missingAlert.classList.add('hidden');
         }
         
+        // Update Download Progress Card
+        const dlCard = document.getElementById('download-progress-card');
+        const dlTitle = document.getElementById('download-title');
+        const dlStatus = document.getElementById('download-status-text');
+        const dlBar = document.getElementById('download-progress-bar');
+        const dlIcon = document.getElementById('download-icon');
+        
+        if (data.download && data.download.status !== 'idle') {
+            dlCard.classList.remove('hidden');
+            
+            if (data.download.status === 'fetching') {
+                dlTitle.textContent = 'Preparing Server Jar...';
+                dlStatus.textContent = 'Querying PaperMC API for latest build details...';
+                dlBar.style.width = '10%';
+                dlIcon.classList.add('spin');
+                dlCard.style.borderLeftColor = 'var(--accent)';
+            } else if (data.download.status === 'downloading') {
+                dlTitle.textContent = 'Downloading Paper 1.21.1...';
+                dlStatus.textContent = `Downloading server executable: ${data.download.progress}%`;
+                dlBar.style.width = `${data.download.progress}%`;
+                dlIcon.classList.add('spin');
+                dlCard.style.borderLeftColor = 'var(--accent)';
+            } else if (data.download.status === 'complete') {
+                dlTitle.textContent = 'Download Complete!';
+                dlStatus.textContent = 'The server jar has been downloaded successfully. Starting server...';
+                dlBar.style.width = '100%';
+                dlIcon.classList.remove('spin');
+                dlCard.style.borderLeftColor = 'var(--success)';
+                // Hide after 4 seconds
+                setTimeout(() => {
+                    dlCard.classList.add('hidden');
+                }, 4000);
+            } else if (data.download.status === 'failed') {
+                dlTitle.textContent = 'Download Failed';
+                dlStatus.textContent = `Error details: ${data.download.error}`;
+                dlBar.style.width = '0%';
+                dlIcon.classList.remove('spin');
+                dlCard.style.borderLeftColor = 'var(--danger)';
+            }
+        } else {
+            dlCard.classList.add('hidden');
+        }
+        
         // Update Metrics
         document.getElementById('mc-cpu-value').textContent = `${data.metrics.mc_cpu.toFixed(1)}%`;
         document.getElementById('mc-cpu-bar').style.width = `${Math.min(100, data.metrics.mc_cpu)}%`;

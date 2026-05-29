@@ -26,6 +26,11 @@ class GlobalState:
         self.active_websockets: List[WebSocket] = []
         self.tunnel_url = "http://localhost:8000"
         
+        # Download state
+        self.download_progress = 0
+        self.download_status = "idle"  # "idle", "fetching", "downloading", "complete", "failed"
+        self.download_error = ""
+        
         # Playit.gg Manager state
         self.playit_manager: PlayitManager = None
         self.playit_websockets: List[WebSocket] = []
@@ -103,6 +108,9 @@ async def read_stream(stream, name):
 
 async def download_paper_jar() -> bool:
     server_jar = os.path.join(state.mc_dir, "server.jar")
+    state.download_status = "fetching"
+    state.download_progress = 0
+    state.download_error = ""
     await broadcast_console("[Sculk Panel] server.jar not found. Fetching latest Paper 1.21.1 build details...")
     
     try:
@@ -126,14 +134,15 @@ async def download_paper_jar() -> bool:
     try:
         def download_file():
             import requests
+            state.download_status = "downloading"
             r = requests.get(download_url, stream=True, timeout=30)
             r.raise_for_status()
             total_length = r.headers.get('content-length')
             
-            last_reported_percent = -1
             with open(server_jar, "wb") as f:
                 if total_length is None:
                     f.write(r.content)
+                    state.download_progress = 100
                 else:
                     dl = 0
                     total_length = int(total_length)
@@ -141,16 +150,16 @@ async def download_paper_jar() -> bool:
                         dl += len(chunk)
                         f.write(chunk)
                         percent = int(dl * 100 / total_length)
-                        # Avoid flooding logs, print progress every 10%
-                        if percent % 10 == 0 and percent != last_reported_percent:
-                            last_reported_percent = percent
-                            # We write directly to stdout of console without broadcasting too frequently
-                            # But a quick console print works
+                        state.download_progress = percent
         
         await loop.run_in_executor(None, download_file)
+        state.download_status = "complete"
+        state.download_progress = 100
         await broadcast_console("[Sculk Panel] Paper 1.21.1 downloaded and saved as server.jar successfully.")
         return True
     except Exception as e:
+        state.download_status = "failed"
+        state.download_error = str(e)
         await broadcast_console(f"[Sculk Panel ERROR] Failed to download Paper 1.21.1: {e}")
         if os.path.exists(server_jar):
             try:
@@ -238,6 +247,11 @@ async def get_status():
         "min_ram": state.min_ram,
         "max_ram": state.max_ram,
         "jar_exists": jar_exists,
+        "download": {
+            "status": state.download_status,
+            "progress": state.download_progress,
+            "error": state.download_error
+        },
         "metrics": {
             "host_cpu": host_cpu,
             "host_ram": host_ram,

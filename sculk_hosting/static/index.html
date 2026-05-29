@@ -99,6 +99,18 @@
                     </div>
                 </div>
 
+                <!-- Server Jar Download Progress Card -->
+                <div class="card download-card hidden" id="download-progress-card">
+                    <div class="card-title-container">
+                        <i data-lucide="download-cloud" class="download-card-icon" id="download-icon"></i>
+                        <h2 id="download-title">Downloading Minecraft Server...</h2>
+                    </div>
+                    <p id="download-status-text" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Preparing...</p>
+                    <div class="progress-bar-container" style="height: 8px; background-color: var(--bg-input); border-radius: 4px; overflow: hidden;">
+                        <div class="progress-bar-fill" id="download-progress-bar" style="width: 0%; height: 100%; background-color: var(--accent); transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+
                 <!-- Performance Metrics Grid -->
                 <div class="metrics-grid">
                     <div class="card metric-card">

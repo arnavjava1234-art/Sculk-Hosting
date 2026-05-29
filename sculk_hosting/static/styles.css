@@ -898,3 +898,24 @@ button:disabled {
     width: 0.95rem;
     height: 0.95rem;
 }
+
+.download-card {
+    border-left: 4px solid var(--accent);
+}
+
+.download-card-icon {
+    color: var(--accent);
+}
+
+.download-card-icon.spin {
+    animation: spin-icon 2s linear infinite;
+}
+
+@keyframes spin-icon {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.card.hidden {
+    display: none;
+}
