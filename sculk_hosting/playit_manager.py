@@ -18,11 +18,11 @@ class PlayitManager:
 
         is_windows = sys.platform.startswith("win")
         if is_windows:
-            self.binary_name = "playit.exe"
-            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/latest/download/playit-windows-amd64.exe"
+            self.binary_name = "playit-v0.2.3.exe"
+            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/download/v0.2.3/playit-windows-amd64.exe"
         else:
-            self.binary_name = "playit"
-            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/latest/download/playit-linux-amd64"
+            self.binary_name = "playit-v0.2.3"
+            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/download/v0.2.3/playit-linux-amd64"
 
         self.binary_path = os.path.join(runtime_dir, self.binary_name)
 
@@ -32,7 +32,7 @@ class PlayitManager:
             return
 
         os.makedirs(self.runtime_dir, exist_ok=True)
-        print(f"[*] Downloading playit.gg tunnel agent...")
+        print(f"[*] Downloading playit.gg tunnel agent (v0.2.3)...")
         print(f"[*] Source: {self.download_url}")
 
         try:
@@ -59,6 +59,13 @@ class PlayitManager:
         
         if self.secret_key:
             try:
+                # Write config for v0.2.3 (local playit.toml in runtime directory)
+                local_config = os.path.join(self.runtime_dir, "playit.toml")
+                with open(local_config, "w") as f:
+                    f.write(f'secret = "{self.secret_key}"\n')
+                print(f"[*] Pre-configured playit v0.2.3 secret key at {local_config}")
+                
+                # Write config for v1.x (global playit.toml)
                 config_path = os.path.expanduser("~/.config/playit_gg/playit.toml")
                 if sys.platform.startswith("win"):
                     config_path = os.path.expandvars(r"%LOCALAPPDATA%\playit\playit.toml")
@@ -66,7 +73,7 @@ class PlayitManager:
                 os.makedirs(os.path.dirname(config_path), exist_ok=True)
                 with open(config_path, "w") as f:
                     f.write(f'secret_key = "{self.secret_key}"\n')
-                print(f"[*] Pre-configured playit secret key at {config_path}")
+                print(f"[*] Pre-configured playit v1.x secret key at {config_path}")
             except Exception as e:
                 print(f"[!] Warning: Could not write playit.toml: {e}")
                 
