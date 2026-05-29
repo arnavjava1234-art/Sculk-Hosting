@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupControlButtons();
     setupRamConfigSync();
     setupFileManager();
+    setupPlayitWebSocket();
     
     // Initial load
     refreshStatus();
@@ -34,7 +35,8 @@ function setupTabNavigation() {
     const tabMeta = {
         overview: { title: 'Dashboard Overview', subtitle: 'Monitor and control your remote Minecraft server.' },
         console: { title: 'Server Console', subtitle: 'Direct terminal access to Minecraft stdout and stdin.' },
-        files: { title: 'File Manager', subtitle: 'Browse, edit, upload, and manage your server files.' }
+        files: { title: 'File Manager', subtitle: 'Browse, edit, upload, and manage your server files.' },
+        join: { title: 'Playit.gg Tunnel Integration', subtitle: 'Expose your server port directly to the internet without port forwarding.' }
     };
 
     navItems.forEach(item => {
@@ -62,6 +64,9 @@ function setupTabNavigation() {
                 loadFiles();
             } else if (tabId === 'console') {
                 scrollToBottom();
+            } else if (tabId === 'join') {
+                const output = document.getElementById('playit-output');
+                if (output) output.scrollTop = output.scrollHeight;
             }
         });
     });
@@ -682,4 +687,46 @@ function formatSize(bytes) {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function setupPlayitWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/playit`;
+    
+    let ws = new WebSocket(wsUrl);
+    const output = document.getElementById('playit-output');
+    
+    ws.onopen = () => {
+        output.innerHTML = '<div class="system-log">[Sculk Panel] Playit stream connected.</div>';
+    };
+    
+    ws.onmessage = (event) => {
+        const line = event.data;
+        const row = document.createElement('div');
+        
+        if (line.includes("https://playit.gg/claim/")) {
+            row.style.color = "var(--accent)";
+            row.style.fontWeight = "bold";
+            const urlRegex = /(https:\/\/playit\.gg\/claim\/[a-zA-Z0-9-]+)/g;
+            row.innerHTML = line.replace(urlRegex, '<a href="$1" target="_blank" style="color:var(--accent); text-decoration: underline; font-weight: 700;">$1</a>');
+        } else {
+            row.textContent = line;
+        }
+        
+        output.appendChild(row);
+        
+        if (output.childNodes.length > 500) {
+            output.removeChild(output.firstChild);
+        }
+        output.scrollTop = output.scrollHeight;
+    };
+    
+    ws.onclose = () => {
+        const row = document.createElement('div');
+        row.className = 'system-log';
+        row.textContent = '[Sculk Panel] Playit stream disconnected. Reconnecting in 5s...';
+        output.appendChild(row);
+        output.scrollTop = output.scrollHeight;
+        setTimeout(setupPlayitWebSocket, 5000);
+    };
 }

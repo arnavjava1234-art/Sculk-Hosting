@@ -10,6 +10,8 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from sculk_hosting.playit_manager import PlayitManager
+
 app = FastAPI(title="Sculk Hosting Control Panel")
 
 # Global State
@@ -23,6 +25,10 @@ class GlobalState:
         self.max_history = 1000
         self.active_websockets: List[WebSocket] = []
         self.tunnel_url = "http://localhost:8000"
+        
+        # Playit.gg Manager state
+        self.playit_manager: PlayitManager = None
+        self.playit_websockets: List[WebSocket] = []
         
         # Default Configs
         self.min_ram = "1G"
@@ -401,3 +407,46 @@ async def websocket_endpoint(websocket: WebSocket):
         print(f"[!] WS Exception: {e}")
         if websocket in state.active_websockets:
             state.active_websockets.remove(websocket)
+
+# --- WEBSOCKET FOR PLAYIT LOG STREAM ---
+
+@app.websocket("/ws/playit")
+async def playit_websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    state.playit_websockets.append(websocket)
+    
+    # Send historical logs immediately
+    if state.playit_manager:
+        for log in state.playit_manager.logs:
+            await websocket.send_text(log)
+            
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        if websocket in state.playit_websockets:
+            state.playit_websockets.remove(websocket)
+    except Exception as e:
+        print(f"[!] Playit WS Exception: {e}")
+        if websocket in state.playit_websockets:
+            state.playit_websockets.remove(websocket)
+
+def handle_playit_log(msg: str):
+    """Callback to broadcast Playit logs to connected WebSockets in a thread-safe manner."""
+    async def send():
+        disconnected = []
+        for ws in state.playit_websockets:
+            try:
+                await ws.send_text(msg)
+            except Exception:
+                disconnected.append(ws)
+        for ws in disconnected:
+            if ws in state.playit_websockets:
+                state.playit_websockets.remove(ws)
+                
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.run_coroutine_threadsafe(send(), loop)
+    except Exception:
+        pass

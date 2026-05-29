@@ -33,6 +33,10 @@
                     <i data-lucide="folder-open"></i>
                     <span>File Manager</span>
                 </button>
+                <button class="nav-item" data-tab="join">
+                    <i data-lucide="link"></i>
+                    <span>Join</span>
+                </button>
             </nav>
             <div class="sidebar-footer">
                 <div class="status-indicator-container">
@@ -214,6 +218,22 @@
                                 <!-- Dynamic File Rows -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB CONTENT: JOIN (PLAYIT.GG) -->
+            <section class="tab-content" id="tab-join">
+                <div class="card playit-card">
+                    <div class="card-title-container">
+                        <i data-lucide="link"></i>
+                        <h2>Playit.gg Tunnel Connections</h2>
+                    </div>
+                    <p class="settings-desc" style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                        Playit.gg allows you to share your Minecraft server without port forwarding. Look for a <strong>claim link</strong> in the logs below to link your agent and get your public server address.
+                    </p>
+                    <div class="console-output" id="playit-output" style="height: 400px; background-color: var(--bg-console); border-radius: 8px; border: 1px solid var(--border-color); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; padding: 1.25rem;">
+                        <div class="system-log">[Sculk Panel] Connecting playit console...</div>
                     </div>
                 </div>
             </section>

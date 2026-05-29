@@ -8,7 +8,8 @@ import uvicorn
 
 from sculk_hosting.jdk_manager import get_java_executable
 from sculk_hosting.tunnel import CloudflareTunnel
-from sculk_hosting.server import app, state, load_config
+from sculk_hosting.playit_manager import PlayitManager
+from sculk_hosting.server import app, state, load_config, handle_playit_log
 
 def sync_tunnel_url(tunnel: CloudflareTunnel):
     """
@@ -72,6 +73,15 @@ def main():
         print(f"[!] Warning: Could not initialize Cloudflare Tunnel: {e}")
         print("[*] Dashboard will only be accessible locally.")
         
+    # 4.5 Start Playit.gg Tunnel Agent
+    playit = PlayitManager(runtime_dir)
+    state.playit_manager = playit
+    playit.send_log_to_callbacks(handle_playit_log)
+    try:
+        playit.start()
+    except Exception as e:
+        print(f"[!] Warning: Could not initialize Playit.gg: {e}")
+
     # 5. Serve Frontend Static files
     static_dir = os.path.join(os.path.dirname(__file__), "static")
     app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
@@ -87,6 +97,7 @@ def main():
     finally:
         # Cleanup
         tunnel.stop()
+        playit.stop()
         if state.process:
             print("[*] Terminating Minecraft server process...")
             try:
