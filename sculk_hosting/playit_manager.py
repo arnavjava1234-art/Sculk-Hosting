@@ -18,11 +18,11 @@ class PlayitManager:
 
         is_windows = sys.platform.startswith("win")
         if is_windows:
-            self.binary_name = "playit-v0.2.3.exe"
-            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/download/v0.2.3/playit-windows-amd64.exe"
+            self.binary_name = "playit-v0.15.13.exe"
+            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/download/v0.15.13/playit-windows-amd64.exe"
         else:
-            self.binary_name = "playit-v0.2.3"
-            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/download/v0.2.3/playit-linux-amd64"
+            self.binary_name = "playit-v0.15.13"
+            self.download_url = "https://github.com/playit-cloud/playit-agent/releases/download/v0.15.13/playit-linux-amd64"
 
         self.binary_path = os.path.join(runtime_dir, self.binary_name)
 
@@ -32,7 +32,7 @@ class PlayitManager:
             return
 
         os.makedirs(self.runtime_dir, exist_ok=True)
-        print(f"[*] Downloading playit.gg tunnel agent (v0.2.3)...")
+        print(f"[*] Downloading playit.gg tunnel agent (v0.15.13)...")
         print(f"[*] Source: {self.download_url}")
 
         try:
@@ -59,11 +59,11 @@ class PlayitManager:
         
         if self.secret_key:
             try:
-                # Write config for v0.2.3 (local playit.toml in runtime directory)
+                # Write config for v0.15.13 (local playit.toml in runtime directory)
                 local_config = os.path.join(self.runtime_dir, "playit.toml")
                 with open(local_config, "w") as f:
                     f.write(f'secret = "{self.secret_key}"\n')
-                print(f"[*] Pre-configured playit v0.2.3 secret key at {local_config}")
+                print(f"[*] Pre-configured playit v0.15.13 secret key at {local_config}")
                 
                 # Write config for v1.x (global playit.toml)
                 config_path = os.path.expanduser("~/.config/playit_gg/playit.toml")
