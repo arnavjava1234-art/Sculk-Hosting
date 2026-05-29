@@ -123,7 +123,7 @@ async function refreshStatus() {
             dlModal.classList.add('open');
             
             let iconName = 'download-cloud';
-            let iconClass = 'download-card-icon spin';
+            let iconClass = 'download-card-icon';
             
             if (data.download.status === 'fetching') {
                 dlTitle.textContent = 'Preparing Server Jar...';
@@ -131,7 +131,7 @@ async function refreshStatus() {
                 dlBar.style.width = '10%';
                 dlPercent.textContent = '10%';
                 iconName = 'download-cloud';
-                iconClass = 'download-card-icon spin';
+                iconClass = 'download-card-icon';
                 dlCloseBtn.classList.add('hidden');
                 appState.downloadCompleteTriggered = false;
             } else if (data.download.status === 'downloading') {
@@ -140,7 +140,7 @@ async function refreshStatus() {
                 dlBar.style.width = `${data.download.progress}%`;
                 dlPercent.textContent = `${data.download.progress}%`;
                 iconName = 'download-cloud';
-                iconClass = 'download-card-icon spin';
+                iconClass = 'download-card-icon';
                 dlCloseBtn.classList.add('hidden');
                 appState.downloadCompleteTriggered = false;
             } else if (data.download.status === 'complete') {

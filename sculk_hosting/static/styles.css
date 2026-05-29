@@ -329,6 +329,7 @@ button, input, textarea, select {
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     padding: 0.65rem 1.25rem;
     border-radius: 8px;
@@ -928,4 +929,36 @@ button:disabled {
 
 .card.hidden {
     display: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+    transition: var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-hover);
+}
+
+/* Scrollbar styling for Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--bg-main);
+}
+
+/* Prevent layout scrolling or scrollbars on the download progress modal */
+#download-modal .modal-content {
+    max-height: none !important;
+    height: auto !important;
 }
