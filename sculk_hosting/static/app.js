@@ -210,6 +210,11 @@ async function refreshStatus() {
             maxSlider.value = parseInt(data.max_ram) || 4;
         }
         
+        const playitSecret = document.getElementById('playit-secret-input');
+        if (playitSecret && document.activeElement !== playitSecret) {
+            playitSecret.value = data.playit_secret || '';
+        }
+        
     } catch (err) {
         console.error("Error fetching status:", err);
         updateStatusUI('offline');
@@ -462,11 +467,19 @@ function setupRamConfigSync() {
         e.target.value = `${val}G`;
         saveRamConfig();
     });
+    
+    const playitSecret = document.getElementById('playit-secret-input');
+    if (playitSecret) {
+        playitSecret.addEventListener('change', () => {
+            saveRamConfig();
+        });
+    }
 }
 
 async function saveRamConfig() {
     const minText = document.getElementById('min-ram-text');
     const maxText = document.getElementById('max-ram-text');
+    const playitSecret = document.getElementById('playit-secret-input');
     const indicator = document.getElementById('ram-autosave-indicator');
     
     indicator.classList.add('saving');
@@ -477,10 +490,11 @@ async function saveRamConfig() {
     try {
         const minRam = minText.value;
         const maxRam = maxText.value;
+        const secretVal = playitSecret ? playitSecret.value : '';
         const res = await fetch('/api/config', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ min_ram: minRam, max_ram: maxRam })
+            body: JSON.stringify({ min_ram: minRam, max_ram: maxRam, playit_secret: secretVal })
         });
         if (res.ok) {
             setTimeout(() => {

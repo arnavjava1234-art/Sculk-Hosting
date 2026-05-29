@@ -74,7 +74,7 @@ def main():
         print("[*] Dashboard will only be accessible locally.")
         
     # 4.5 Start Playit.gg Tunnel Agent
-    playit = PlayitManager(runtime_dir)
+    playit = PlayitManager(runtime_dir, state.playit_secret)
     state.playit_manager = playit
     playit.send_log_to_callbacks(handle_playit_log)
     try:

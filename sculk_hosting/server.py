@@ -38,6 +38,7 @@ class GlobalState:
         # Default Configs
         self.min_ram = "1G"
         self.max_ram = "4G"
+        self.playit_secret = ""
 
 state = GlobalState()
 
@@ -53,6 +54,7 @@ def load_config():
                 data = json.load(f)
                 state.min_ram = data.get("min_ram", "1G")
                 state.max_ram = data.get("max_ram", "4G")
+                state.playit_secret = data.get("playit_secret", "")
         except Exception as e:
             print(f"[!] Error loading config: {e}")
 
@@ -60,7 +62,11 @@ def save_config():
     config_path = get_config_path()
     try:
         with open(config_path, "w") as f:
-            json.dump({"min_ram": state.min_ram, "max_ram": state.max_ram}, f, indent=4)
+            json.dump({
+                "min_ram": state.min_ram,
+                "max_ram": state.max_ram,
+                "playit_secret": state.playit_secret
+            }, f, indent=4)
     except Exception as e:
         print(f"[!] Error saving config: {e}")
 
@@ -251,6 +257,7 @@ async def get_status():
         "tunnel_url": state.tunnel_url,
         "min_ram": state.min_ram,
         "max_ram": state.max_ram,
+        "playit_secret": state.playit_secret,
         "jar_exists": jar_exists,
         "download": {
             "status": state.download_status,
@@ -275,11 +282,13 @@ async def clear_download():
 class ConfigModel(BaseModel):
     min_ram: str
     max_ram: str
+    playit_secret: str
 
 @app.post("/api/config")
 async def update_config(cfg: ConfigModel):
     state.min_ram = cfg.min_ram
     state.max_ram = cfg.max_ram
+    state.playit_secret = cfg.playit_secret
     save_config()
     return {"message": "Config updated successfully"}
 

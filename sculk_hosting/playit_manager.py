@@ -7,8 +7,9 @@ import threading
 from typing import List, Callable
 
 class PlayitManager:
-    def __init__(self, runtime_dir: str):
+    def __init__(self, runtime_dir: str, secret_key: str = ""):
         self.runtime_dir = runtime_dir
+        self.secret_key = secret_key
         self.process = None
         self.logs: List[str] = []
         self.max_logs = 500
@@ -55,6 +56,20 @@ class PlayitManager:
     def start(self):
         """Starts playit process in a background thread."""
         self.download_if_missing()
+        
+        if self.secret_key:
+            try:
+                config_path = os.path.expanduser("~/.config/playit_gg/playit.toml")
+                if sys.platform.startswith("win"):
+                    config_path = os.path.expandvars(r"%LOCALAPPDATA%\playit\playit.toml")
+                
+                os.makedirs(os.path.dirname(config_path), exist_ok=True)
+                with open(config_path, "w") as f:
+                    f.write(f'secret_key = "{self.secret_key}"\n')
+                print(f"[*] Pre-configured playit secret key at {config_path}")
+            except Exception as e:
+                print(f"[!] Warning: Could not write playit.toml: {e}")
+                
         self.thread = threading.Thread(target=self._run_agent, daemon=True)
         self.thread.start()
 
