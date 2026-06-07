@@ -286,10 +286,21 @@ class ConfigModel(BaseModel):
 
 @app.post("/api/config")
 async def update_config(cfg: ConfigModel):
+    old_secret = state.playit_secret
     state.min_ram = cfg.min_ram
     state.max_ram = cfg.max_ram
     state.playit_secret = cfg.playit_secret
     save_config()
+    
+    # Automatically restart Playit agent when secret changes
+    if old_secret != cfg.playit_secret and state.playit_manager:
+        state.playit_manager.secret_key = cfg.playit_secret
+        state.playit_manager.stop()
+        try:
+            state.playit_manager.start()
+        except Exception as e:
+            print(f"[!] Failed to restart playit agent: {e}")
+            
     return {"message": "Config updated successfully"}
 
 @app.post("/api/control")
