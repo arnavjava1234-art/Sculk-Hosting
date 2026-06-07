@@ -19,7 +19,7 @@ Copy and paste this single cell into your Google Colab Notebook to install **Scu
 *Once executed, a **`trycloudflare.com`** URL will be printed in the output logs. Open it in your browser to access the control panel!*
 
 > [!TIP]
-> If the normal setup doesn't work, or if you experience connection drops / `DNS_PROBE_FINISHED_NXDOMAIN` errors (often caused by blocked UDP ports on Colab), you can use the **manual patch cell** (Option B) found inside the `sculk_setup.ipynb` file. This script forces Cloudflare Tunnel to use the HTTP/2 protocol.
+> If the normal setup doesn't work, or if you experience connection drops / `DNS_PROBE_FINISHED_NXDOMAIN` errors (often caused by blocked UDP ports on Colab), you can download and run the setup notebook [sculk_setup.ipynb](sculk_setup.ipynb) from this repository using the **manual patch cell** (Option B). This script forces Cloudflare Tunnel to use the HTTP/2 protocol.
 
 ---
 
