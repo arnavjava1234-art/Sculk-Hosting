@@ -481,10 +481,11 @@ async function saveRamConfig() {
     const maxText = document.getElementById('max-ram-text');
     const playitSecret = document.getElementById('playit-secret-input');
     const indicator = document.getElementById('ram-autosave-indicator');
+    const iconContainer = indicator.querySelector('.icon-container');
     
     indicator.classList.add('saving');
     indicator.querySelector('span').textContent = 'Saving settings...';
-    indicator.querySelector('i').setAttribute('data-lucide', 'refresh-cw');
+    iconContainer.innerHTML = '<i data-lucide="refresh-cw"></i>';
     lucide.createIcons();
     
     try {
@@ -500,14 +501,20 @@ async function saveRamConfig() {
             setTimeout(() => {
                 indicator.classList.remove('saving');
                 indicator.querySelector('span').textContent = 'Settings saved automatically';
-                indicator.querySelector('i').setAttribute('data-lucide', 'check');
+                iconContainer.innerHTML = '<i data-lucide="check"></i>';
                 lucide.createIcons();
             }, 600);
+        } else {
+            indicator.classList.remove('saving');
+            indicator.querySelector('span').textContent = 'Failed to auto-save';
+            iconContainer.innerHTML = '<i data-lucide="x"></i>';
+            lucide.createIcons();
         }
     } catch (err) {
         console.error("Failed to save RAM config:", err);
+        indicator.classList.remove('saving');
         indicator.querySelector('span').textContent = 'Failed to auto-save';
-        indicator.querySelector('i').setAttribute('data-lucide', 'x');
+        iconContainer.innerHTML = '<i data-lucide="x"></i>';
         lucide.createIcons();
     }
 }
