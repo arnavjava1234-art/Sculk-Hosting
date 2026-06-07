@@ -22,7 +22,7 @@ def sync_tunnel_url(tunnel: CloudflareTunnel):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Sculk Hosting: A premium, lightweight Minecraft server control panel for Kaggle notebooks."
+        description="Sculk Hosting: A premium, lightweight Minecraft server control panel for Google Colab."
     )
     parser.add_argument(
         "--port", 

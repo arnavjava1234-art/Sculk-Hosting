@@ -1,16 +1,16 @@
 # Sculk Hosting 🌌
 
-A premium, lightweight, zero-configuration Minecraft server control panel designed specifically for running servers inside **Kaggle Notebooks**.
+A premium, lightweight, zero-configuration Minecraft server control panel designed specifically for running servers inside **Google Colab**.
 
 ---
 
-## 🚀 Quick Start on Kaggle
+## 🚀 Quick Start on Google Colab
 
-Copy and paste this single cell into your Kaggle Notebook to install **Sculk Hosting** and launch the control panel:
+Copy and paste this single cell into your Google Colab Notebook to install **Sculk Hosting** and launch the control panel:
 
 ```python
 # 1. Install Sculk Hosting directly from GitHub
-!pip install git+https://github.com/your-username/sculk-hosting.git
+!pip install git+https://github.com/arnavjava1234-art/Sculk-Hosting.git
 
 # 2. Run the panel (it will auto-install JDK 21, set up a Cloudflare Tunnel, and start the dashboard)
 !sculk
@@ -22,7 +22,7 @@ Copy and paste this single cell into your Kaggle Notebook to install **Sculk Hos
 
 ## ✨ Features
 
-- **Zero configuration**: Auto-downloads a portable **JDK 21** and **Cloudflare Tunnel** matching the Kaggle environment.
+- **Zero configuration**: Auto-downloads a portable **JDK 21** and **Cloudflare Tunnel** matching the Google Colab environment.
 - **Dark "Sculk" Theme**: High-fidelity dark mode with glowing teal/purple accents using **Lucide icons**.
 - **Real-time Console**: Live-streamed stdout logs and direct command input via WebSockets.
 - **JVM RAM Slider**: Instantly adjust memory allocation from the UI.
@@ -37,7 +37,7 @@ To install and run **Sculk Hosting** locally in development mode:
 
 1. Clone the repository and navigate to the folder:
    ```bash
-   cd sculk-hosting
+   cd Sculk-Hosting
    ```
 
 2. Install the package in editable mode:
