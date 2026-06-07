@@ -34,3 +34,6 @@ sculk_config.json
 # IDEs
 .vscode/
 .idea/
+
+# Jupyter Notebooks
+sculk_setup.ipynb

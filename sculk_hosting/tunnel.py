@@ -62,7 +62,7 @@ class CloudflareTunnel:
         self.tunnel_thread.start()
 
     def _run_tunnel(self):
-        cmd = [self.binary_path, "tunnel", "--url", f"http://127.0.0.1:{self.local_port}"]
+        cmd = [self.binary_path, "tunnel", "--protocol", "http2", "--url", f"http://127.0.0.1:{self.local_port}"]
         
         # We redirect stderr to stdout because cloudflared logs to stderr
         self.process = subprocess.Popen(
